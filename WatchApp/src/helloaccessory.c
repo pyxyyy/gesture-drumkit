@@ -22,7 +22,7 @@
 // to get 200hz, request an update every 5 ms
 #define UPDATE_INTERVAL 5
 #define SENSOR_COUNT 2
-#define BUFFER_SIZE 500
+#define BUFFER_SIZE 600
 // remember to change the value in sensor.options (9*2)
 #define MESSAGES_COUNT 9*SENSOR_COUNT
 
