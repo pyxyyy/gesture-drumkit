@@ -432,7 +432,7 @@ static void _send_message() {
 	// TODO: 
 	// try using a separate thread for everything below, if it makes sense to do so
 	// be careful with the buffer
-	// or... use a thread pool & limit the size to 1
+	// use a thread pool & limit the size to a small number?
 	// https://developer.tizen.org/development/guides/native-application/user-interface/efl/core-loop-and-os-interfacing/using-threads
 	pb_ostream_t stream = pb_ostream_from_buffer(buffer, BUFFER_SIZE);
 	bool status = pb_encode(&stream, WatchPacket_fields, &packet);
