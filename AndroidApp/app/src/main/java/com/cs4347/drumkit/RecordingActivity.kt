@@ -11,11 +11,21 @@ import java.io.BufferedWriter
 import java.io.File
 import java.sql.Date
 import java.sql.Timestamp
+import android.content.res.AssetManager
+
+
 
 /**
  * Writes recorded data to sdcard
  */
 class RecordingActivity: Activity() {
+    init
+    {
+        System.loadLibrary("native-lib");
+    }
+
+    private external fun native_onStart(assetManager: AssetManager)
+    private external fun native_onStop()
 
     companion object {
         private val rootDir = "drumkit_record"
@@ -61,6 +71,14 @@ class RecordingActivity: Activity() {
             stop_button.isEnabled = false
             start_button.isEnabled = true
             dataLoggerDisposable.clear()
+        }
+
+        audio_start_button.setOnClickListener{
+            native_onStart(getAssets());
+        }
+
+        audio_stop_button.setOnClickListener{
+            native_onStop();
         }
     }
 
