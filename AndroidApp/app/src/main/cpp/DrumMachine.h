@@ -45,6 +45,8 @@ public:
     onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
 
 private:
+    void preparePlayerEvents();
+
     AAssetManager& mAssetManager;
     AudioStream *mAudioStream{nullptr};
     std::vector<std::shared_ptr<Player>> mPlayerList;
@@ -53,6 +55,7 @@ private:
     LockFreeQueue<std::tuple<int64_t, int>, kMaxQueueItems> mPlayerEvents;
     std::atomic<int64_t> mCurrentFrame { 0 };
     //int beat_map[kTotalBeat][kTotalBeat] = {{ 0 }};
+    int mTempo = 60;
 };
 
 

@@ -16,6 +16,7 @@
 
 #include <utils/logging.h>
 #include <thread>
+#include <cmath>
 
 #include "DrumMachine.h"
 
@@ -41,21 +42,7 @@ void DrumMachine::start() {
         mMixer.addTrack(mSamplePlayer);
     }
 
-    // Add the audio frame numbers on which the clap sound should be played to the clap event queue.
-    // The backing track tempo is 120 beats per minute, which is 2 beats per second. At a sample
-    // rate of 48000 frames per second this means a beat occurs every 24000 frames, starting at
-    // zero. So the first 3 beats are: 0, 24000, 48000
-    //    mClapEvents.push(0);
-    //    mClapEvents.push(24000);
-    //    mClapEvents.push(48000);
-    mPlayerEvents.push(std::make_tuple((int64_t)0,0));
-    mPlayerEvents.push(std::make_tuple((int64_t)60000, 1));
-    mPlayerEvents.push(std::make_tuple((int64_t)120000, 2));
-    mPlayerEvents.push(std::make_tuple((int64_t)180000, 3));
-    mPlayerEvents.push(std::make_tuple((int64_t)240000, 4));
-    mPlayerEvents.push(std::make_tuple((int64_t)300000, 5));
-    mPlayerEvents.push(std::make_tuple((int64_t)360000, 6));
-    mPlayerEvents.push(std::make_tuple((int64_t)420000, 7));
+    preparePlayerEvents();
 
     // Create a builder
     AudioStreamBuilder builder;
@@ -93,10 +80,28 @@ void DrumMachine::stop(){
     }
 }
 
+void DrumMachine::preparePlayerEvents(){
+    // Add the audio frame numbers on which the sample sound should be played to the sample event queue.
+    // For example the tempo is 60 beats per minute, which is 1 beats per second. At a sample
+    // rate of 48000 frames per second this means a beat occurs every 48000 frames, starting at
+    // zero.
+    // TODO load events from beat_map
+    mPlayerEvents.push(std::make_tuple((int64_t)0,0));
+    mPlayerEvents.push(std::make_tuple((int64_t)60000, 1));
+    mPlayerEvents.push(std::make_tuple((int64_t)120000, 2));
+    mPlayerEvents.push(std::make_tuple((int64_t)180000, 3));
+    mPlayerEvents.push(std::make_tuple((int64_t)240000, 4));
+    mPlayerEvents.push(std::make_tuple((int64_t)300000, 5));
+    mPlayerEvents.push(std::make_tuple((int64_t)360000, 6));
+    mPlayerEvents.push(std::make_tuple((int64_t)420000, 7));
+}
+
 DataCallbackResult DrumMachine::onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) {
 
     std::tuple<int64_t, int> nextClapEvent;
 
+    // TODO support concurrent playback
+    int32_t loop_duration = kTotalBeat * round((60.0f / mTempo) * kSampleRateHz);
     for (int i = 0; i < numFrames; ++i) {
 
         if (mPlayerEvents.peek(nextClapEvent) && mCurrentFrame == std::get<0>(nextClapEvent)) {
@@ -106,7 +111,14 @@ DataCallbackResult DrumMachine::onAudioReady(AudioStream *oboeStream, void *audi
 
         mMixer.renderAudio(static_cast<int16_t*>(audioData)+(kChannelCount*i), 1);
         mCurrentFrame++;
+
+        if ( mCurrentFrame > loop_duration ) {
+            mCurrentFrame = 0;
+            preparePlayerEvents();
+        }
+
     }
+
 
     return DataCallbackResult::Continue;
 }
