@@ -8,7 +8,7 @@
     tools:context="com.cs4347.drumkit.GenerateTrackActivity">
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/tempoUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -31,12 +31,11 @@
         android:text="Tempo: 60"
         android:textAlignment="center"
         android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
-        app:layout_constraintTop_toTopOf="@+id/imageButton2"/>
+        app:layout_constraintStart_toEndOf="@+id/tempoUp"
+        app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/tempoDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
@@ -45,10 +44,10 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_round_arrow_drop_up_24px"
         app:layout_constraintStart_toEndOf="@+id/tempoText"
-        app:layout_constraintTop_toTopOf="@+id/imageButton2"/>
+        app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
     <ImageButton
-        android:id="@+id/imageButton4"
+        android:id="@+id/pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -57,11 +56,11 @@
         android:padding="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_round_pause_circle_filled_24px"
-        app:layout_constraintStart_toEndOf="@+id/imageButton3"
-        app:layout_constraintTop_toTopOf="@+id/imageButton2"/>
+        app:layout_constraintStart_toEndOf="@+id/tempoDown"
+        app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
     <ImageButton
-        android:id="@+id/imageButton5"
+        android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
@@ -69,11 +68,11 @@
         android:padding="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_round_play_circle_filled_24px"
-        app:layout_constraintStart_toEndOf="@+id/imageButton4"
-        app:layout_constraintTop_toTopOf="@+id/imageButton2"/>
+        app:layout_constraintStart_toEndOf="@+id/pause"
+        app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
     <ImageButton
-        android:id="@+id/imageButton6"
+        android:id="@+id/record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
@@ -81,8 +80,8 @@
         android:padding="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_round_record_24px"
-        app:layout_constraintStart_toEndOf="@+id/imageButton5"
-        app:layout_constraintTop_toTopOf="@+id/imageButton2"/>
+        app:layout_constraintStart_toEndOf="@+id/play"
+        app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
     <Button
         android:id="@+id/button4"
@@ -90,9 +89,9 @@
         android:layout_height="0dp"
         android:text="Clear"
         android:layout_marginStart="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageButton3"
-        app:layout_constraintStart_toEndOf="@+id/imageButton6"
-        app:layout_constraintTop_toTopOf="@+id/imageButton2"/>
+        app:layout_constraintBottom_toBottomOf="@+id/tempoDown"
+        app:layout_constraintStart_toEndOf="@+id/record"
+        app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
     <View
         android:layout_width="match_parent"
@@ -101,6 +100,6 @@
         android:layout_marginRight="24dp"
         android:layout_marginTop="12dp"
         android:background="#AE000000"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton5"/>
+        app:layout_constraintTop_toBottomOf="@+id/play"/>
 
 </android.support.constraint.ConstraintLayout>
