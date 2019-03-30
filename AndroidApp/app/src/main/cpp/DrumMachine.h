@@ -19,6 +19,9 @@
 
 #include <android/asset_manager.h>
 #include <oboe/Oboe.h>
+#include <tuple>
+#include <vector>
+#include <string>
 
 #include "audio/Mixer.h"
 #include "audio/Player.h"
@@ -44,11 +47,12 @@ public:
 private:
     AAssetManager& mAssetManager;
     AudioStream *mAudioStream{nullptr};
-    std::shared_ptr<Player> mClap;
+    std::vector<std::shared_ptr<Player>> mPlayerList;
     Mixer mMixer;
 
-    LockFreeQueue<int64_t, kMaxQueueItems> mClapEvents;
+    LockFreeQueue<std::tuple<int64_t, int>, kMaxQueueItems> mPlayerEvents;
     std::atomic<int64_t> mCurrentFrame { 0 };
+    //int beat_map[kTotalBeat][kTotalBeat] = {{ 0 }};
 };
 
 
