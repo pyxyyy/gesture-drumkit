@@ -84,7 +84,7 @@
         app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/clear"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:text="Clear"
@@ -93,13 +93,14 @@
         app:layout_constraintStart_toEndOf="@+id/record"
         app:layout_constraintTop_toTopOf="@+id/tempoUp"/>
 
-    <View
+    <com.cs4347.drumkit.view.DrumKitSeekBar
+        android:id="@+id/drumkit_seekbar"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
+        android:layout_height="0dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginTop="12dp"
-        android:background="#AE000000"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/play"/>
 
 </android.support.constraint.ConstraintLayout>
