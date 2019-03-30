@@ -23,8 +23,8 @@ DrumMachine::DrumMachine(AAssetManager &assetManager): mAssetManager(assetManage
 }
 
 void DrumMachine::start() {
-    std::vector<std::string> asset_list = { "clap.wav", "finger-cymbal.wav", "hihat.wav", "kick.wav", "rim-tom.wav",
-            "scratch.mp3", "snare.wav", "splash.wav" };
+    std::vector<std::string> asset_list = { "clap.wav", "finger-cymbal.wav", "hihat.wav", "kick.wav", "rim.wav",
+            "scratch.wav", "snare.wav", "splash.wav" };
     for(std::string wav_file : asset_list){
         // Load the RAW PCM data files for both the sample sound and backing track into memory.
         std::shared_ptr<AAssetDataSource> mSampleSource(AAssetDataSource::newFromAssetManager(mAssetManager,
