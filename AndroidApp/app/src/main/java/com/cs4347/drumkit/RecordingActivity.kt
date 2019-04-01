@@ -26,6 +26,7 @@ class RecordingActivity: Activity() {
 
     private external fun native_onStart(assetManager: AssetManager)
     private external fun native_onStop()
+    private external fun native_insertBeat(channel_idx: Int)
 
     companion object {
         private val rootDir = "drumkit_record"
@@ -80,6 +81,12 @@ class RecordingActivity: Activity() {
         audio_stop_button.setOnClickListener{
             native_onStop();
         }
+
+        audio_insert_beat_button.setOnClickListener {
+            // TODO set channel idx by selecting a channel strip on the UI
+            native_insertBeat(0);
+        }
+
     }
 
     override fun onStop() {

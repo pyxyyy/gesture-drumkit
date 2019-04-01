@@ -37,6 +37,10 @@ public:
 
     void start();
     void stop();
+    void setTempo(int tempo);
+    void resetTrack(int track_idx);
+    void resetAll();
+    void insertBeat(int track_idx);
     // void onSurfaceChanged(int widthInPixels, int heightInPixels);
 
 
@@ -46,6 +50,9 @@ public:
 
 private:
     void preparePlayerEvents();
+    void processUpdateEvents();
+    int quantizeFrameNum(int64_t frameNum);
+    void printBeatMap();
 
     AAssetManager& mAssetManager;
     AudioStream *mAudioStream{nullptr};
@@ -53,8 +60,9 @@ private:
     Mixer mMixer;
 
     LockFreeQueue<std::tuple<int64_t, int>, kMaxQueueItems> mPlayerEvents;
+    LockFreeQueue<std::tuple<int64_t, int>, kMaxQueueItems> mUpdateEvents;
     std::atomic<int64_t> mCurrentFrame { 0 };
-    //int beat_map[kTotalBeat][kTotalBeat] = {{ 0 }};
+    int mBeatMap[kTotalTrack][kTotalBeat] = {{ 0 }};
     int mTempo = 60;
 };
 

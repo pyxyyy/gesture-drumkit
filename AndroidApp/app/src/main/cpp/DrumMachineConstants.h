@@ -21,5 +21,6 @@ constexpr int kSampleRateHz = 48000; // Fixed sample rate, see README
 constexpr int kBufferSizeInBursts = 2; // Use 2 bursts as the buffer size (double buffer)
 constexpr int kMaxQueueItems = 64; // Must be power of 2
 constexpr int kTotalBeat = 16;
+constexpr int kTotalTrack = 8;
 
 #endif //DRUM_MACHINE_CONSTANTS_H

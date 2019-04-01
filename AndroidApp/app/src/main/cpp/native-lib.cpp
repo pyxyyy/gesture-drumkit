@@ -45,4 +45,28 @@ JNIEXPORT void JNICALL
 Java_com_cs4347_drumkit_RecordingActivity_native_1onStop(JNIEnv *env, jobject instance) {
     dmachine->stop();
 }
+
+
+JNIEXPORT void JNICALL
+Java_com_cs4347_drumkit_RecordingActivity_native_1setTempo(JNIEnv *env, jobject instance, jint tempo) {
+    dmachine->setTempo(tempo);
+}
+
+
+JNIEXPORT void JNICALL
+Java_com_cs4347_drumkit_RecordingActivity_native_1resetTrack(JNIEnv *env, jobject instance, jint track_idx) {
+    dmachine->resetTrack(track_idx);
+}
+
+
+JNIEXPORT void JNICALL
+Java_com_cs4347_drumkit_RecordingActivity_native_1resetAll(JNIEnv *env, jobject instance) {
+    dmachine->resetAll();
+}
+
+JNIEXPORT void JNICALL
+Java_com_cs4347_drumkit_RecordingActivity_native_1insertBeat(JNIEnv *env, jobject instance, jint track_idx) {
+    dmachine->insertBeat(track_idx);
+}
+
 }
