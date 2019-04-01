@@ -69,4 +69,10 @@ Java_com_cs4347_drumkit_RecordingActivity_native_1insertBeat(JNIEnv *env, jobjec
     dmachine->insertBeat(track_idx);
 }
 
+JNIEXPORT void JNICALL
+Java_com_cs4347_drumkit_RecordingActivity_native_1toggleMetronome(JNIEnv *env, jobject instance) {
+    dmachine->toggleMetronome();
+}
+
+
 }

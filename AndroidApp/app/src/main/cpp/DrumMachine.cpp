@@ -25,7 +25,7 @@ DrumMachine::DrumMachine(AAssetManager &assetManager): mAssetManager(assetManage
 
 void DrumMachine::start() {
     std::vector<std::string> asset_list = { "clap.wav", "finger-cymbal.wav", "hihat.wav", "kick.wav", "rim.wav",
-            "scratch.wav", "snare.wav", "splash.wav" };
+            "scratch.wav", "snare.wav", "splash.wav", "metronome.wav"};
     for(std::string wav_file : asset_list){
         // Load the RAW PCM data files for both the sample sound and backing track into memory.
         std::shared_ptr<AAssetDataSource> mSampleSource(AAssetDataSource::newFromAssetManager(mAssetManager,
@@ -41,8 +41,6 @@ void DrumMachine::start() {
         // simultaneously using a single audio stream.
         mMixer.addTrack(mSamplePlayer);
     }
-
-    preparePlayerEvents();
 
     // Create a builder
     AudioStreamBuilder builder;
@@ -70,6 +68,9 @@ void DrumMachine::start() {
         LOGE("Failed to start stream. Error: %s", convertToText(result));
     }
 
+    processUpdateEvents();
+    preparePlayerEvents();
+    printBeatMap();
 }
 
 void DrumMachine::stop(){
@@ -137,18 +138,20 @@ void DrumMachine::preparePlayerEvents(){
     // zero.
     int frame_per_beat =  static_cast<int>(round((60.0f / mTempo) * kSampleRateHz));
 
-    for (int i=0; i < kTotalTrack; i++){
-        for (int j=0; j < kTotalBeat; j++){
+    for (int j=0; j < kTotalBeat; j++){
+        for (int i=0; i < kTotalTrack; i++){
             if (mBeatMap[i][j] == 1) {
                 mPlayerEvents.push(std::make_tuple((int64_t) j * frame_per_beat, i));
             }
         }
+        // always add metronome events
+        mPlayerEvents.push(std::make_tuple((int64_t) j * frame_per_beat, kMetronomeTrackIdx));
     }
 }
 
 void DrumMachine::printBeatMap(){
     LOGD("[mBeatMap]");
-    for (int i=0; i < kTotalTrack; i++){
+    for (int i=0; i < (kTotalTrack - 1); i++){
         std::string output = "ch" + std::to_string(i);
         for (int j=0; j < kTotalBeat; j++){
             if (mBeatMap[i][j] == 0){
@@ -161,17 +164,23 @@ void DrumMachine::printBeatMap(){
     }
 }
 
-DataCallbackResult DrumMachine::onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) {
+void DrumMachine::toggleMetronome() {
+    mMetronomeOn = !mMetronomeOn;
+}
 
+DataCallbackResult DrumMachine::onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     std::tuple<int64_t, int> nextClapEvent;
 
-    // TODO support concurrent playback
     int32_t loop_duration = kTotalBeat * static_cast<int>(round((60.0f / mTempo) * kSampleRateHz));
-    for (int i = 0; i < numFrames; ++i) {
 
+    for (int i = 0; i < numFrames; ++i) {
+        // play sample sounds
         while (mPlayerEvents.peek(nextClapEvent) && mCurrentFrame == std::get<0>(nextClapEvent)) {
-            mPlayerList[std::get<1>(nextClapEvent)]->setPlaying(true);
-            mPlayerEvents.pop(nextClapEvent);
+            int track_idx = std::get<1>(nextClapEvent);
+            if ((track_idx != kMetronomeTrackIdx) || (track_idx == kMetronomeTrackIdx && mMetronomeOn)){
+                mPlayerList[std::get<1>(nextClapEvent)]->setPlaying(true);
+                mPlayerEvents.pop(nextClapEvent);
+            }
         }
 
         mMixer.renderAudio(static_cast<int16_t*>(audioData)+(kChannelCount*i), 1);

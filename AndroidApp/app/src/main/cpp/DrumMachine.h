@@ -41,6 +41,7 @@ public:
     void resetTrack(int track_idx);
     void resetAll();
     void insertBeat(int track_idx);
+    void toggleMetronome();
     // void onSurfaceChanged(int widthInPixels, int heightInPixels);
 
 
@@ -64,6 +65,7 @@ private:
     std::atomic<int64_t> mCurrentFrame { 0 };
     int mBeatMap[kTotalTrack][kTotalBeat] = {{ 0 }};
     int mTempo = 60;
+    bool mMetronomeOn = true;
 };
 
 
