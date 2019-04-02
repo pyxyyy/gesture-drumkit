@@ -14,6 +14,9 @@ class SensorDataSubject private constructor() {
 
     val serviceConnectionListener: ServiceConnectionListener =
             object: ServiceConnectionListener {
+
+                private var prev_packet_time = Long.MIN_VALUE
+
                 override fun onInit() {
                     // reset after init doesn't matter, there should not be observers
                     reset()
@@ -25,6 +28,10 @@ class SensorDataSubject private constructor() {
                     Log.d(TAG, "Packet's First Msg: ${firstMsg.sensorType}, " +
                             "Time: ${firstMsg.timestamp}, " +
                             "Data: ${firstMsg.dataList}")
+                    if (prev_packet_time > packet.getMessages(0).timestamp) {
+                        throw AssertionError("Order of WatchPackets received is not chronological, handle it!")
+                    }
+
                     packet.messagesList.forEach {
                         subject.onNext(it)
                     }
@@ -42,7 +49,7 @@ class SensorDataSubject private constructor() {
 
     private fun reset() {
         if (!subject.hasComplete() || !subject.hasThrowable()) {
-            subject.onError(Exception("SensorDataSubject is abruptly reset"))
+            Log.e(TAG, "SensorDataSubject is abruptly reset")
         }
         subject = PublishSubject.create()
     }
