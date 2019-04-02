@@ -75,7 +75,7 @@ class RecordingActivity: Activity() {
         }
 
         audio_start_button.setOnClickListener{
-            native_onStart(getAssets());
+            native_onStart(assets);
         }
 
         audio_stop_button.setOnClickListener{

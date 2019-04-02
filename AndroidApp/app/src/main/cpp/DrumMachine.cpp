@@ -119,7 +119,7 @@ void DrumMachine::processUpdateEvents() {
         int beat_idx = quantizeFrameNum(frameNum);
         mBeatMap[track_idx][beat_idx] = 1;
         mUpdateEvents.pop(nextUpdateEvent);
-        LOGD("[processUpdateEvent] event(%lld,%d)-> beat_idx: %d", frameNum, track_idx, beat_idx);
+        LOGD("[processUpdateEvent] event(%ld,%d)-> beat_idx: %d", frameNum, track_idx, beat_idx);
     }
 }
 
