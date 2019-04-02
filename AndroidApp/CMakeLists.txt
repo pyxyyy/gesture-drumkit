@@ -40,7 +40,7 @@ target_link_libraries( native-lib
         )
 
 # Set the path to the Oboe directory.
-set (OBOE_DIR ../oboe)
+set (OBOE_DIR ../dependencies/oboe)
 add_subdirectory (${OBOE_DIR} ./oboe)
 
 # Make the Oboe public headers available to our app
