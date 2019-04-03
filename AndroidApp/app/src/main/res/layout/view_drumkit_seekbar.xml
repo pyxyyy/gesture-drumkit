@@ -1,24 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     >
 
     <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#B0D1D1D1"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        app:layout_constraintRight_toRightOf="@+id/drumkit_temp_rv"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar"
+        app:layout_constraintTop_toTopOf="@+id/seekBar"
+        />
+
+    <View
+        android:layout_width="0.7dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
         android:background="#990099CC"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="4dp"
+        android:paddingTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/seekBar"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar"
         />
 
     <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:progressTint="@android:color/transparent"
-        android:paddingStart="16dp"
+        android:id="@+id/seekBar"
+        android:layout_width="436dp"
+        android:layout_height="18dp"
+        android:layout_marginLeft="86dp"
         android:paddingEnd="16dp"
-        />
+        android:paddingStart="16dp"
+        android:progressDrawable="@android:color/transparent"
+        android:progressTint="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-</merge>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/drumkit_temp_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar"
+        tools:listitem="@layout/view_instrument_row"/>
+
+</android.support.constraint.ConstraintLayout>

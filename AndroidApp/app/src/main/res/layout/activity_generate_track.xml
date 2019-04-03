@@ -101,6 +101,8 @@
         android:layout_marginRight="24dp"
         android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/play"/>
+        app:layout_constraintTop_toBottomOf="@+id/play">
+
+    </com.cs4347.drumkit.view.DrumKitSeekBar>
 
 </android.support.constraint.ConstraintLayout>
