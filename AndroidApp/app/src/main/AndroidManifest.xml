@@ -17,6 +17,7 @@
         android:label="@string/app_name">
 
         <activity android:name=".GenerateTrackActivity"
+                  android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape">
         </activity>
         <activity
