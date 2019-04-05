@@ -1,6 +1,8 @@
 package com.cs4347.drumkit.view
 
 import android.content.Context
+import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -9,21 +11,21 @@ import android.widget.SeekBar
 import com.cs4347.drumkit.R
 
 
-class DrumKitSeekBar: RelativeLayout {
+class DrumKitInstrumentsView: ConstraintLayout {
 
     private lateinit var seekBar: SeekBar
     private lateinit var seekLine: View
+    lateinit var instrumentsRecycler: RecyclerView
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int):
-            super(context, attrs, defStyleAttr, defStyleRes)
     constructor(context: Context, attrs: AttributeSet): super(context, attrs) {
 
-        LayoutInflater.from(context).inflate(R.layout.view_drumkit_seekbar, this, true)
+        LayoutInflater.from(context).inflate(R.layout.view_drumkit_instruments_view, this, true)
 
-        seekLine = getChildAt(0) as View
-        seekBar = getChildAt(1) as SeekBar
+        seekLine = findViewById(R.id.seek_line)
+        seekBar = findViewById(R.id.seek_bar)
+        instrumentsRecycler = findViewById(R.id.instruments_rv)
 
         // set a dummy listener so the seek line follows the seekbar thumb
         this.setSeekBarOnChangeListener(object: SeekBar.OnSeekBarChangeListener {
@@ -37,7 +39,7 @@ class DrumKitSeekBar: RelativeLayout {
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 val width = seekBar.width - seekBar.paddingLeft - seekBar.paddingRight
-                val thumbPos = seekBar.paddingLeft + width * seekBar.progress.toFloat() / seekBar.max
+                val thumbPos = seekBar.x + seekBar.paddingStart + width * seekBar.progress.toFloat() / seekBar.max
                 seekLine.x = thumbPos
                 listener.onProgressChanged(p0, p1, p2)
             }

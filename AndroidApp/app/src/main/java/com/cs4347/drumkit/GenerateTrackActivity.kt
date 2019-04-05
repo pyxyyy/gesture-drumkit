@@ -6,7 +6,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import com.cs4347.drumkit.view.DrumKitInstrumentsAdapter
 import kotlinx.android.synthetic.main.activity_generate_track.*
-import kotlinx.android.synthetic.main.view_drumkit_seekbar.*
+import kotlinx.android.synthetic.main.view_drumkit_instruments_view.*
 
 class GenerateTrackActivity : Activity() {
 
@@ -26,7 +26,10 @@ class GenerateTrackActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_generate_track)
 
-        drumkit_temp_rv.adapter = instrumentsAdapter
-        drumkit_temp_rv.layoutManager = LinearLayoutManager(this)
+        drumkit_instruments.instrumentsRecycler.apply {
+            this.adapter = instrumentsAdapter
+            this.layoutManager = LinearLayoutManager(this@GenerateTrackActivity)
+        }
+
     }
 }
