@@ -13,7 +13,7 @@ import com.cs4347.drumkit.R
 
 class DrumKitInstrumentsView: ConstraintLayout {
 
-    private lateinit var seekBar: SeekBar
+    lateinit var seekBar: SeekBar
     private lateinit var seekLine: View
     lateinit var instrumentsRecycler: RecyclerView
 
@@ -27,6 +27,7 @@ class DrumKitInstrumentsView: ConstraintLayout {
         seekBar = findViewById(R.id.seek_bar)
         instrumentsRecycler = findViewById(R.id.instruments_rv)
 
+        // put a larger max, so small updates can be seen
         // set a dummy listener so the seek line follows the seekbar thumb
         this.setSeekBarOnChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {}
@@ -39,7 +40,8 @@ class DrumKitInstrumentsView: ConstraintLayout {
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 val width = seekBar.width - seekBar.paddingLeft - seekBar.paddingRight
-                val thumbPos = seekBar.x + seekBar.paddingStart + width * seekBar.progress.toFloat() / seekBar.max
+                // offset of 3 somehow makes it look better
+                val thumbPos = seekBar.x + seekBar.paddingStart + width * seekBar.progress.toFloat() / seekBar.max - 3
                 seekLine.x = thumbPos
                 listener.onProgressChanged(p0, p1, p2)
             }

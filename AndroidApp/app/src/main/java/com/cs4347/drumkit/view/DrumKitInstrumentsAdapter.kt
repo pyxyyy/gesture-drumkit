@@ -19,7 +19,7 @@ class DrumKitInstrumentsAdapter(private val instrumentNames: List<Pair<String, I
         RecyclerView.Adapter<DrumKitRowViewHolder>() {
 
     companion object {
-        private const val COLUMNS = 16
+        const val COLUMNS = 16
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DrumKitRowViewHolder {

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.cs4347.drumkit.GenerateTrackActivity">
 
-    <ImageButton
+    <com.cs4347.drumkit.view.AutoGrayImageButton
         android:id="@+id/tempoDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         app:layout_constraintStart_toEndOf="@+id/tempoDown"
         app:layout_constraintBottom_toBottomOf="@+id/tempoDown"/>
 
-    <ImageButton
+    <com.cs4347.drumkit.view.AutoGrayImageButton
         android:id="@+id/tempoUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,8 +47,8 @@
         app:layout_constraintStart_toEndOf="@+id/tempoText"
         app:layout_constraintTop_toTopOf="@+id/tempoDown"/>
 
-    <ImageButton
-        android:id="@+id/pause"
+    <com.cs4347.drumkit.view.AutoGrayImageButton
+        android:id="@+id/record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -56,11 +56,11 @@
         android:minWidth="40dp"
         android:padding="8dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_round_pause_circle_filled_24px"
+        android:src="@drawable/ic_round_record_24px"
         app:layout_constraintStart_toEndOf="@+id/tempoUp"
         app:layout_constraintTop_toTopOf="@+id/tempoDown"/>
 
-    <ImageButton
+    <com.cs4347.drumkit.view.AutoGrayImageButton
         android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,18 +69,18 @@
         android:padding="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_round_play_circle_filled_24px"
-        app:layout_constraintStart_toEndOf="@+id/pause"
+        app:layout_constraintStart_toEndOf="@+id/record"
         app:layout_constraintTop_toTopOf="@+id/tempoDown"/>
 
-    <ImageButton
-        android:id="@+id/record"
+    <com.cs4347.drumkit.view.AutoGrayImageButton
+        android:id="@+id/pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
         android:minWidth="40dp"
         android:padding="8dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_round_record_24px"
+        android:src="@drawable/ic_round_pause_circle_filled_24px"
         app:layout_constraintStart_toEndOf="@+id/play"
         app:layout_constraintTop_toTopOf="@+id/tempoDown"/>
 
@@ -91,7 +91,7 @@
         android:text="Clear"
         android:layout_marginStart="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/tempoUp"
-        app:layout_constraintStart_toEndOf="@+id/record"
+        app:layout_constraintStart_toEndOf="@+id/pause"
         app:layout_constraintTop_toTopOf="@+id/tempoDown"/>
 
     <com.cs4347.drumkit.view.DrumKitInstrumentsView
