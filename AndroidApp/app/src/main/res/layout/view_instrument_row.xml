@@ -15,7 +15,8 @@
         android:text="An Instrument"
         android:background="@color/colorKick"
         android:layout_gravity="center"
-        android:padding="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:gravity="center"
         android:textColor="@color/colorLighterGray"
         android:textStyle="bold"
@@ -25,7 +26,7 @@
         android:layout_height="match_parent"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/instrument_beats_view"
+        android:id="@+id/instrument_beats_rv"
         android:layout_marginLeft="16dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         android:layout_width="wrap_content"

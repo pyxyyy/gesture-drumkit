@@ -3,8 +3,12 @@ package com.cs4347.drumkit
 import android.app.Activity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.widget.SeekBar
+import android.widget.Toast
+import com.cs4347.drumkit.view.BeatsAdapter
 import com.cs4347.drumkit.view.DrumKitInstrumentsAdapter
+import com.cs4347.drumkit.view.RowSelectionListener
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -12,6 +16,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_generate_track.*
 import kotlinx.android.synthetic.main.view_drumkit_instruments_view.view.*
+import kotlinx.android.synthetic.main.view_instrument_row.view.*
 import java.sql.Time
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
@@ -37,19 +42,27 @@ class GenerateTrackActivity : Activity() {
             "Rim" to R.color.colorRim
     )
 
-    private val instrumentsAdapter = DrumKitInstrumentsAdapter(instruments)
+    private lateinit var instrumentsAdapter: DrumKitInstrumentsAdapter
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     private var seekBarMovementDisposable: Disposable? = null
 
 
     private var tempo = tempoRange.first
-    private var selectedInstrumentRow = 0
+    private var selectedInstrumentRow: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_generate_track)
 
+        instrumentsAdapter = DrumKitInstrumentsAdapter(instruments, object: RowSelectionListener {
+            override fun onRowSelected(row: Int) {
+                selectedInstrumentRow = row
+                Toast.makeText(this@GenerateTrackActivity,
+                        "Row ${selectedInstrumentRow} selected",
+                        Toast.LENGTH_SHORT).show()
+            }
+        })
 
         drumkit_instruments.instrumentsRecycler.apply {
             this.adapter = instrumentsAdapter
@@ -67,14 +80,12 @@ class GenerateTrackActivity : Activity() {
         }
 
         play.setOnClickListener {
-            setButtons(true)
-            startSeekBarMovement()
+            play()
         }
 
         record.setOnClickListener {
             // TODO add ML recognizer here
-            setButtons(true)
-            startSeekBarMovement()
+            play()
         }
 
         pause.setOnClickListener {
@@ -91,16 +102,44 @@ class GenerateTrackActivity : Activity() {
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
 
+        clear.setOnClickListener {
+            clearBeatRow()
+        }
+
         setTempoText()
         setButtons(false)
         drumkit_instruments.seekBar.max =
                 60 * 1000 * tempo * DrumKitInstrumentsAdapter.COLUMNS * seekBarUpdatePeriod.toInt()
     }
 
+    private fun play() {
+        if (selectedInstrumentRow == null) {
+            drumkit_instruments.instrumentsRecycler.getChildAt(0).performClick()
+        }
+        setButtons(true)
+        startSeekBarMovement()
+    }
+
     private fun pause() {
         // todo: stop ml if possible
         setButtons(false)
         stopSeekBarMovement()
+    }
+
+    private fun setBeatView(col: Int, activate: Boolean) {
+        selectedInstrumentRow?.let {
+            val beatRowRecycler: RecyclerView = drumkit_instruments.instrumentsRecycler.getChildAt(it).instrument_beats_rv
+            val beatRowAdapter = beatRowRecycler.adapter as BeatsAdapter
+            beatRowAdapter.setColumn(col, activate)
+        }
+    }
+
+    private fun clearBeatRow() {
+        selectedInstrumentRow?.let {
+            val beatRowRecycler: RecyclerView = drumkit_instruments.instrumentsRecycler.getChildAt(it).instrument_beats_rv
+            val beatRowAdapter = beatRowRecycler.adapter as BeatsAdapter
+            beatRowAdapter.clearAll()
+        }
     }
 
     private fun setButtons(playingBack: Boolean) {
