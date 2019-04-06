@@ -126,6 +126,11 @@ class GenerateTrackActivity : Activity() {
         stopSeekBarMovement()
     }
 
+    override fun onStop() {
+        disposables.clear()
+        super.onStop()
+    }
+
     private fun setBeatView(col: Int, activate: Boolean) {
         selectedInstrumentRow?.let {
             val beatRowRecycler: RecyclerView = drumkit_instruments.instrumentsRecycler.getChildAt(it).instrument_beats_rv
