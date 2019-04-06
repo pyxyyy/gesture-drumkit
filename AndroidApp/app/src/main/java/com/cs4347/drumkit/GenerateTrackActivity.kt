@@ -28,9 +28,7 @@ import android.view.animation.DecelerateInterpolator
 import android.animation.ObjectAnimator
 import android.animation.Animator
 import android.R.attr.animation
-
-
-
+import android.view.View
 
 
 class GenerateTrackActivity : Activity() {
@@ -71,7 +69,7 @@ class GenerateTrackActivity : Activity() {
             override fun onRowSelected(row: Int) {
                 selectedInstrumentRow = row
                 Toast.makeText(this@GenerateTrackActivity,
-                        "Row ${selectedInstrumentRow} selected",
+                        "Row $selectedInstrumentRow selected",
                         Toast.LENGTH_SHORT).show()
             }
         })
@@ -96,7 +94,8 @@ class GenerateTrackActivity : Activity() {
         }
 
         record.setOnClickListener {
-            // TODO add ML recognizer here
+            // TODO start ML recognizer here
+            // TODO: tell drum machine to add beat to selected row inside
             play()
         }
 
@@ -116,6 +115,17 @@ class GenerateTrackActivity : Activity() {
 
         clear.setOnClickListener {
             clearSelectedInstrumentBeats()
+        }
+
+        // TODO: delete after debugging
+        debug_add_beat.apply {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                // TODO: tell drum machine to add beat to selected row
+                Toast.makeText(this@GenerateTrackActivity,
+                        "WIP, connect me to drum machine!",
+                        Toast.LENGTH_SHORT).show()
+            }
         }
 
         setTempoText()
@@ -199,7 +209,7 @@ class GenerateTrackActivity : Activity() {
         disposables.add(drumkit_instruments.seekBar.shiftTo(destProgress, seekBarSnapDuration)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    // TODO: start mixer when code is available
+                    // TODO: start drum machine when code is available
                     startSeekBarMovement()
                 })
     }
