@@ -19,10 +19,6 @@ import io.reactivex.subjects.CompletableSubject
 import kotlinx.android.synthetic.main.activity_generate_track.*
 import kotlinx.android.synthetic.main.view_instrument_row.view.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
 import android.view.animation.DecelerateInterpolator
 import android.animation.ObjectAnimator
 import android.animation.Animator
@@ -30,6 +26,10 @@ import android.content.res.AssetManager
 import android.view.View
 import android.os.Build
 import com.cs4347.drumkit.gestures.GestureRecognizer
+import io.reactivex.Single
+import java.lang.AssertionError
+import java.util.concurrent.Semaphore
+import kotlin.math.*
 
 
 class GenerateTrackActivity : Activity() {
@@ -63,6 +63,7 @@ class GenerateTrackActivity : Activity() {
     )
     private val disposables: CompositeDisposable = CompositeDisposable()
     private val gestureRecognizer = GestureRecognizer(this)
+    private val mutex = Semaphore(1, true)
 
     private lateinit var instrumentsAdapter: DrumKitInstrumentsAdapter
     private var tempo = tempoRange.first
@@ -149,15 +150,60 @@ class GenerateTrackActivity : Activity() {
 
         record.setOnClickListener {
             play()
-            gestureRecognizer.subscribeToGestures {
-                // casting should be safe here, there should always be a track selected
-                val beatIdx = native_insertBeat(selectedInstrumentRow!!)
-                setSelectedInstrumentBeat(beatIdx, true)
+
+            val recentMessageThreshold = GestureRecognizer.MESSAGE_PERIOD * GestureRecognizer.WINDOW_SIZE
+            var lastGestureTime = 0L
+            gestureRecognizer.subscribeToGestures { gesture ->
+                // a single gesture by the user is be detected as
+                // multiple gestures happening around the same time
+
+                // there is no guarantee whether first gesture detected in the window is
+                // from the start, middle, or end of the window
+                // (due to ml recognition)
+                // subsequent detected gestures may also come from earlier parts of the window
+                // (due to multithreading)
+
+                // The following is an example sequence of gestures
+                // ... a3 > a2 > ...(some time)... b2 > b1 > b4 ...
+                // (a & b are single gestures from the user. each spans 4 frames)
+
+                // ignore any gesture that happens recently from the prev gesture
+                // ignore any gesture that happened in the past
+                // (assumes that gestures are detected mostly in sequential order)
+
+                // check sequential assumption
+                if (lastGestureTime - gesture.time >= recentMessageThreshold/2) {
+                    throw AssertionError("multithreading bug: gestures are not detected in sequential order at all")
+                }
+
+                // only respond to new gestures
+                if (lastGestureTime < gesture.time) {
+                    // lock timing check & assignment
+                    mutex.acquire()
+                    val gestureIsTooRecent = (gesture.time - lastGestureTime) < recentMessageThreshold
+                    if (!gestureIsTooRecent) {
+                        lastGestureTime = gesture.time
+                        mutex.release()
+
+                        // call on ui thread
+                        Single.just(Unit)
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe { _, _ ->
+                                    // casting is safe here, a track is always selected after play()
+                                    val beatIdx = native_insertBeat(selectedInstrumentRow!!)
+                                    setSelectedInstrumentBeat(beatIdx, true)
+                                }
+                    } else {
+                        mutex.release()
+                    }
+                }
+
             }
         }
 
         pause.setOnClickListener {
             pause()
+            gestureRecognizer.stopSubscriptionToGestures()
         }
 
         // pause when seekbar is adjusted by user
