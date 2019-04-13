@@ -2,27 +2,27 @@ package com.cs4347.drumkit.gestures
 
 import Sensor.WatchPacket.SensorMessage
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.cs4347.drumkit.transmission.SensorDataSubject
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import java.lang.Math.abs
 import java.sql.Time
 import java.util.*
 
 enum class GestureType {DOWN, UP, LEFT, RIGHT, FRONT, BACK}
-data class Gesture(val type: GestureType, val time: Time)
+data class Gesture(val type: GestureType, val time: Long)
 
 class GestureRecognizer(private val context: Context) {
 
     companion object {
         private const val WINDOW_SIZE = 10
-        private const val NUM_SENSORS = 5
+        private const val NUM_SENSORS = 2
         private const val HISTORY_SIZE = 200
         private val DATA_ITEMS_PER_PACKET = SensorMessage.getDefaultInstance().dataCount
+        private val MODEL_INPUT_SIZE = NUM_SENSORS * WINDOW_SIZE * DATA_ITEMS_PER_PACKET
+        private const val TAG = "GestureRecognizer"
 
         // 5ms between each message item
         private const val MESSAGE_PERIOD = 5
@@ -101,7 +101,7 @@ class GestureRecognizer(private val context: Context) {
                 || gyroscopeWindow.size < WINDOW_SIZE)
 
         if (hasSufficientData) {
-            val processedData = FloatArray(WINDOW_SIZE* NUM_SENSORS)
+            val processedData = FloatArray(MODEL_INPUT_SIZE)
             val gyIterator = gyroscopeWindow.iterator()
             val accelIterator = accelerationWindow.iterator()
 
@@ -126,12 +126,26 @@ class GestureRecognizer(private val context: Context) {
         }
     }
 
+    // TODO: remove after debugging
+    private var predictCountDebug = 0
+    // 1000ms / (5ms*2), a gesture every 1s
+    private val fakeGestureAfterNCounts = 1000 / 10
 
     private fun predict(data: FloatArray): Gesture? {
         // ensure data queue uses the same data type as what is required here
         // so we don't waste time copying data
         // ignore subsequent requests to predict if a gesture is detected
-        TODO("recognition / inference code here")
+        // TODO: supposed to predict gesture with data, $data"
+        predictCountDebug += 1
+
+        if (fakeGestureAfterNCounts == predictCountDebug) {
+            Log.d(TAG, "Predicting a fake gesture")
+            predictCountDebug = 0
+            return Gesture(GestureType.DOWN, System.currentTimeMillis());
+        } else {
+            return null
+        }
+
     }
 
 }
