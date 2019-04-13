@@ -29,7 +29,7 @@ import android.animation.Animator
 import android.content.res.AssetManager
 import android.view.View
 import android.os.Build
-import com.cs4347.drumkit.transmission.SensorDataSubject
+import com.cs4347.drumkit.gestures.GestureRecognizer
 
 
 class GenerateTrackActivity : Activity() {
@@ -43,7 +43,6 @@ class GenerateTrackActivity : Activity() {
     {
         System.loadLibrary("native-lib")
     }
-
 
     companion object {
         private val tempoRange = Pair(60, 120)
@@ -62,15 +61,15 @@ class GenerateTrackActivity : Activity() {
             "Scratch" to R.color.colorScratch,
             "Rim" to R.color.colorRim
     )
+    private val disposables: CompositeDisposable = CompositeDisposable()
+    private val gestureRecognizer = GestureRecognizer(this)
 
     private lateinit var instrumentsAdapter: DrumKitInstrumentsAdapter
-    private val disposables: CompositeDisposable = CompositeDisposable()
+    private var tempo = tempoRange.first
+    private var selectedInstrumentRow: Int? = null
 
     private var seekBarMovementDisposable: Disposable? = null
     private var sensorDataDisposable: Disposable? = null
-
-    private var tempo = tempoRange.first
-    private var selectedInstrumentRow: Int? = null
 
     private fun hideNavBar() {
         val currentApiVersion = android.os.Build.VERSION.SDK_INT
@@ -149,20 +148,12 @@ class GenerateTrackActivity : Activity() {
         }
 
         record.setOnClickListener {
-            SensorDataSubject.instance.observe()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.computation())
-                    .doOnError {
-                        Toast.makeText(this@GenerateTrackActivity,
-                                "Data stream has died!", Toast.LENGTH_SHORT).show()
-                    }
-                    .subscribe {
-                        // TODO feed ml recoginzer with data
-                    }.apply {
-                        sensorDataDisposable = this
-                        disposables.add(this)
-                    }
             play()
+            gestureRecognizer.subscribeToGestures {
+                // casting should be safe here, there should always be a track selected
+                val beatIdx = native_insertBeat(selectedInstrumentRow!!)
+                setSelectedInstrumentBeat(beatIdx, true)
+            }
         }
 
         pause.setOnClickListener {
