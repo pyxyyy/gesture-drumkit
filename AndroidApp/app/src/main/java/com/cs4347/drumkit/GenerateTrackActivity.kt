@@ -29,8 +29,7 @@ import android.animation.Animator
 import android.content.res.AssetManager
 import android.view.View
 import android.os.Build
-
-
+import com.cs4347.drumkit.transmission.SensorDataSubject
 
 
 class GenerateTrackActivity : Activity() {
@@ -68,7 +67,7 @@ class GenerateTrackActivity : Activity() {
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     private var seekBarMovementDisposable: Disposable? = null
-
+    private var sensorDataDisposable: Disposable? = null
 
     private var tempo = tempoRange.first
     private var selectedInstrumentRow: Int? = null
@@ -145,13 +144,24 @@ class GenerateTrackActivity : Activity() {
         }
 
         play.setOnClickListener {
-            // TODO disable beat input from gestures in play mode
             debug_add_beat.isEnabled = false
             play()
         }
 
         record.setOnClickListener {
-            // TODO start ML recognizer here
+            SensorDataSubject.instance.observe()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.computation())
+                    .doOnError {
+                        Toast.makeText(this@GenerateTrackActivity,
+                                "Data stream has died!", Toast.LENGTH_SHORT).show()
+                    }
+                    .subscribe {
+                        // TODO feed ml recoginzer with data
+                    }.apply {
+                        sensorDataDisposable = this
+                        disposables.add(this)
+                    }
             play()
         }
 
@@ -174,8 +184,8 @@ class GenerateTrackActivity : Activity() {
             clearSelectedInstrumentBeats()
         }
 
-        // TODO: delete after debugging
         debug_add_beat.apply {
+            // TODO: delete after debugging
             visibility = View.VISIBLE
             setOnClickListener {
                 val channelIdx = selectedInstrumentRow
@@ -216,11 +226,10 @@ class GenerateTrackActivity : Activity() {
     }
 
     private fun pause() {
-        // todo: stop ml if possible
         debug_add_beat.isEnabled = true
         setButtons(false)
-        stopSeekBarMovement()
-        // todo: add native_pause
+        seekBarMovementDisposable?.dispose()
+        sensorDataDisposable?.dispose()
         native_onStop()
     }
 
@@ -254,10 +263,6 @@ class GenerateTrackActivity : Activity() {
         clear.isEnabled = !playingBack
 
         pause.isEnabled = playingBack
-    }
-
-    private fun stopSeekBarMovement() {
-        seekBarMovementDisposable?.dispose()
     }
 
     private fun calcDestinationBeat(): Int {
