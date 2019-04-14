@@ -16,7 +16,7 @@ import java.util.*
 enum class GestureType {DOWN, UP, LEFT, RIGHT, FRONT, BACK}
 data class Gesture(val type: GestureType, val time: Long)
 
-class GestureRecognizer(private val context: Context) {
+class GestureRecognizer {
 
     companion object {
         const val WINDOW_SIZE = 10
@@ -34,6 +34,7 @@ class GestureRecognizer(private val context: Context) {
     private val gyroscopeWindow: LinkedList<SensorMessage> = LinkedList()
     private val accelerationHistory: LinkedList<SensorMessage> = LinkedList()
     private val compositeDisposable = CompositeDisposable()
+    var returnFakeGestureAfter2SecsOfData = false
 
     /**
      * Subscribe to gestures & respond on listener
@@ -146,24 +147,26 @@ class GestureRecognizer(private val context: Context) {
 
     // TODO: remove after debugging
     private var predictCountDebug = 0
-    // 1000ms / (5ms*2), a gesture every 1s
-    private val fakeGestureAfterNCounts = 2000 / 10
+    // 2 * 1000ms / 5ms, a gesture every 2s
+    private val fakeGestureAfterNCounts = 2 * 1000 / 5
 
     private fun predict(data: FloatArray): Gesture? {
         // ensure data queue uses the same data type as what is required here
         // so we don't waste time copying data
         // ignore subsequent requests to predict if a gesture is detected
         // TODO: supposed to predict gesture with data, $data"
-        predictCountDebug += 1
+        if (returnFakeGestureAfter2SecsOfData) {
+            predictCountDebug += 1
 
-        if (fakeGestureAfterNCounts == predictCountDebug) {
-            Log.d(TAG, "Predicting a fake gesture")
-            predictCountDebug = 0
-            return Gesture(GestureType.DOWN, System.currentTimeMillis());
-        } else {
-            return null
+            if (fakeGestureAfterNCounts == predictCountDebug) {
+                Log.d(TAG, "Predicting a fake gesture")
+                predictCountDebug = 0
+                return Gesture(GestureType.DOWN, System.currentTimeMillis());
+            } else {
+                return null
+            }
         }
-
+        return null
     }
 
 }

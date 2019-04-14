@@ -62,7 +62,7 @@ class GenerateTrackActivity : Activity() {
             "Rim" to R.color.colorRim
     )
     private val disposables: CompositeDisposable = CompositeDisposable()
-    private val gestureRecognizer = GestureRecognizer(this)
+    private val gestureRecognizer = GestureRecognizer()
     private val mutex = Semaphore(1, true)
 
     private lateinit var instrumentsAdapter: DrumKitInstrumentsAdapter
@@ -237,6 +237,23 @@ class GenerateTrackActivity : Activity() {
 
 
             }
+        }
+        debug_mock_gesture.apply {
+            // TODO: delete after debugging
+            visibility = View.VISIBLE
+            setOnClickListener {
+                gestureRecognizer.returnFakeGestureAfter2SecsOfData =
+                        !gestureRecognizer.returnFakeGestureAfter2SecsOfData
+                val onOffText = when (gestureRecognizer.returnFakeGestureAfter2SecsOfData) {
+                    true -> "ON"
+                    false -> "OFF"
+                }
+                Toast.makeText(this@GenerateTrackActivity,
+                        "Mocks a gesture after 2s of data is received & processed, $onOffText",
+                        Toast.LENGTH_LONG).show()
+                text = "Mock Ges($onOffText)"
+            }
+
         }
 
         setTempoText()
