@@ -98,9 +98,11 @@ class GestureRecognizer(activity: Activity,
                     // predict a gesture only if we have to
                     val inCoolDown = System.currentTimeMillis() - gestureDetectedTime < recognitionCoolDown
                     val gravityData = SensorDataSubject.instance.mostRecentGravityData.toFloatArray()
-                    val cosFromUp = cosineSimilarity(faceRightGravityTemplate, gravityData)
-                    val tooFarFromUpOrRight =  cosFromUp > 0.3 && cosFromUp < 0.6
-                    val skipGesture = inCoolDown || tooFarFromUpOrRight
+                    val cosFromUp = cosineSimilarity(faceUpGravityTemplate, gravityData)
+                    val cosFromRight = cosineSimilarity(faceRightGravityTemplate, gravityData)
+
+                    val closeToUpOrRight =  cosFromUp > 0.6 || cosFromRight > 0.6
+                    val skipGesture = inCoolDown || !closeToUpOrRight
                     val gestureType = when(skipGesture) {
                         false -> {
                             val gestureTypePrediction =
